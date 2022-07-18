@@ -18,6 +18,7 @@
 #include <stdlib.h>
 
 #include <esp_log.h>
+#include <esp32_sys.h>
 #include <driver/rmt.h>
 
 #include <context.h>
@@ -372,3 +373,8 @@ const struct Nif *atomvm_neopixel_get_nif(const char *nifname)
     }
     return NULL;
 }
+
+#include <sdkconfig.h>
+#ifdef CONFIG_AVM_NEOPIXEL_ENABLE
+REGISTER_NIF_COLLECTION(atomvm_neopixel, atomvm_neopixel_init, atomvm_neopixel_get_nif)
+#endif

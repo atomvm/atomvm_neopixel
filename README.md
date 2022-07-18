@@ -6,6 +6,5 @@ This Nif is included as an add-on to the AtomVM base image.  In order to use thi
 
 Documentation for this library can be found in the following sections:
 
-* [Build Instructions](markdown/build.md)
-* [Programmer's Guide](markdown/guide.md)
+* [Programmer's Guide](markdown/neopixel.md)
 * [Neopixel Example Program](examples/neopixel_example/README.md)

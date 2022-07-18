@@ -1,4 +1,4 @@
+.vscode/**
 _build/**
-_checkouts/**
 doc/**
 rebar.lock

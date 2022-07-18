@@ -1,0 +1,9 @@
+menu "ATOMVM_NEOPIXEL Configuration"
+
+config AVM_NEOPIXEL_ENABLE
+	bool  "Enable AtomVM NEOPIXEL driver"
+	default y
+	help
+		Use this parameter to enable or disable the AtomVM NEOPIXEL driver.
+
+endmenu
