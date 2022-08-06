@@ -17,16 +17,14 @@
 
 #include <stdlib.h>
 
+#include <atomvm_neopixel.h>
+#include <context.h>
+#include <driver/rmt.h>
+#include <defaultatoms.h>
 #include <esp_log.h>
 #include <esp32_sys.h>
-#include <driver/rmt.h>
-
-#include <context.h>
-#include <defaultatoms.h>
 #include <nifs.h>
 #include <term.h>
-
-#include "atomvm_neopixel.h"
 #include "led_strip.h"
 
 // #define ENABLE_TRACE

@@ -15,5 +15,13 @@
 // limitations under the License.
 //
 
+#ifndef __ATOMVM_NEOPIXEL_H__
+#define __ATOMVM_NEOPIXEL_H__
+
+#include "context.h"
+#include "nifs.h"
+
 void atomvm_neopixel_init(GlobalContext *global);
 const struct Nif *atomvm_neopixel_get_nif(const char *nifname);
+
+#endif
