@@ -26,7 +26,7 @@ set(ATOMVM_NEOPIXEL_COMPONENT_SRCS
 idf_component_register(
     SRCS ${ATOMVM_NEOPIXEL_COMPONENT_SRCS}
     INCLUDE_DIRS "nifs/include"
-    PRIV_REQUIRES "libatomvm" "main" "driver"
+    PRIV_REQUIRES "libatomvm" "avm_sys" "driver"
 )
 
 idf_build_set_property(
