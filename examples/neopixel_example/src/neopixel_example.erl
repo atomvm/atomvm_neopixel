@@ -19,7 +19,7 @@
 -export([start/0]).
 
 -define(NEOPIXEL_PIN, 18).
--define(NUM_PIXELS, 9).
+-define(NUM_PIXELS, 4).
 
 -define(SATURATION, 100).
 -define(VALUE, 15).
@@ -29,11 +29,11 @@ start() ->
     ok = neopixel:clear(NeoPixel),
     lists:foreach(
         fun(I) ->
-            spawn(fun() -> loop(NeoPixel, I, 0, atomvm_lib:random(100, 500)) end)
+            spawn(fun() -> loop(NeoPixel, I, 0, 100) end)
         end,
         lists:seq(0, ?NUM_PIXELS - 1)
     ),
-    atomvm_lib:sleep_forever().
+    timer:sleep(infinity).
 
 loop(NeoPixel, I, Hue, SleepMs) ->
     ok = neopixel:set_pixel_hsv(NeoPixel, I, Hue, ?SATURATION, ?VALUE),

@@ -47,7 +47,7 @@ static const char *const channel_3_atom       = "\x9"  "channel_3";
 
 static inline term ptr_to_binary(void *ptr, Context* ctx)
 {
-    return term_from_literal_binary(&ptr, sizeof(int), ctx);
+    return term_from_literal_binary(&ptr, sizeof(int), &ctx->heap, ctx->global);
 }
 
 
@@ -63,14 +63,17 @@ static inline void *binary_to_ptr(term binary)
 
 static rmt_channel_t get_rmt_channel(Context *ctx, term channel)
 {
-    if (channel == context_make_atom(ctx, channel_0_atom)) {
+    if (channel == globalcontext_make_atom(ctx->global, channel_0_atom)) {
         return RMT_CHANNEL_1;
-    } else if (channel == context_make_atom(ctx, channel_1_atom)) {
+    } else if (channel == globalcontext_make_atom(ctx->global, channel_1_atom)) {
         return RMT_CHANNEL_2;
-    } else if (channel == context_make_atom(ctx, channel_2_atom)) {
+    } else if (channel == globalcontext_make_atom(ctx->global, channel_2_atom)) {
+        return RMT_CHANNEL_2;
+    } else if (channel == globalcontext_make_atom(ctx->global, channel_3_atom)) {
         return RMT_CHANNEL_3;
-    } else if (channel == context_make_atom(ctx, channel_3_atom)) {
-        return RMT_CHANNEL_4;
+#if SOC_RMT_CHANNELS_PER_GROUP > 4
+    // TODO
+#endif
     } else {
         return RMT_CHANNEL_MAX;
     }
@@ -100,7 +103,7 @@ static term nif_init(Context *ctx, int argc, term argv[])
         esp_err_t err = rmt_config(&config);
         if (err != ESP_OK) {
             TRACE("Failed to initialize rmt config.  err=%i\n", err);
-            term error_tuple = term_alloc_tuple(2, ctx);
+            term error_tuple = term_alloc_tuple(2, &ctx->heap);
             term_put_tuple_element(error_tuple, 0, ERROR_ATOM);
             term_put_tuple_element(error_tuple, 1, term_from_int(err));
             return error_tuple;
@@ -108,7 +111,7 @@ static term nif_init(Context *ctx, int argc, term argv[])
         err = rmt_driver_install(config.channel, 0, NO_ALLOC_FLAGS);
         if (err != ESP_OK) {
             TRACE("Failed to install rmt driver.  err=%i\n", err);
-            term error_tuple = term_alloc_tuple(2, ctx);
+            term error_tuple = term_alloc_tuple(2, &ctx->heap);
             term_put_tuple_element(error_tuple, 0, ERROR_ATOM);
             term_put_tuple_element(error_tuple, 1, term_from_int(err));
             return error_tuple;
@@ -117,9 +120,9 @@ static term nif_init(Context *ctx, int argc, term argv[])
         led_strip_t *strip = led_strip_new_rmt_ws2812(&strip_config);
         if (!strip) {
             TRACE("Failed to install WS2812 driver.\n");
-            term error_tuple = term_alloc_tuple(2, ctx);
+            term error_tuple = term_alloc_tuple(2, &ctx->heap);
             term_put_tuple_element(error_tuple, 0, ERROR_ATOM);
-            term_put_tuple_element(error_tuple, 1, context_make_atom(ctx, led_strip_atom));
+            term_put_tuple_element(error_tuple, 1, globalcontext_make_atom(ctx->global, led_strip_atom));
             return error_tuple;
         }
         ESP_LOGI(TAG, "Installed WS2812 driver.");
@@ -145,7 +148,7 @@ static term nif_clear(Context *ctx, int argc, term argv[])
         if (UNLIKELY(memory_ensure_free(ctx, 3) != MEMORY_GC_OK)) {
             RAISE_ERROR(OUT_OF_MEMORY_ATOM);
         } else {
-            term error_tuple = term_alloc_tuple(2, ctx);
+            term error_tuple = term_alloc_tuple(2, &ctx->heap);
             term_put_tuple_element(error_tuple, 0, ERROR_ATOM);
             term_put_tuple_element(error_tuple, 1, term_from_int(err));
             return error_tuple;
@@ -173,7 +176,7 @@ static term nif_refresh(Context *ctx, int argc, term argv[])
         if (UNLIKELY(memory_ensure_free(ctx, 3) != MEMORY_GC_OK)) {
             RAISE_ERROR(OUT_OF_MEMORY_ATOM);
         } else {
-            term error_tuple = term_alloc_tuple(2, ctx);
+            term error_tuple = term_alloc_tuple(2, &ctx->heap);
             term_put_tuple_element(error_tuple, 0, ERROR_ATOM);
             term_put_tuple_element(error_tuple, 1, term_from_int(err));
             return error_tuple;
@@ -208,7 +211,7 @@ static term nif_set_pixel_rgb(Context *ctx, int argc, term argv[])
         if (UNLIKELY(memory_ensure_free(ctx, 3) != MEMORY_GC_OK)) {
             RAISE_ERROR(OUT_OF_MEMORY_ATOM);
         } else {
-            term error_tuple = term_alloc_tuple(2, ctx);
+            term error_tuple = term_alloc_tuple(2, &ctx->heap);
             term_put_tuple_element(error_tuple, 0, ERROR_ATOM);
             term_put_tuple_element(error_tuple, 1, term_from_int(err));
             return error_tuple;
@@ -248,7 +251,7 @@ static term nif_set_pixel_hsv(Context *ctx, int argc, term argv[])
         if (UNLIKELY(memory_ensure_free(ctx, 3) != MEMORY_GC_OK)) {
             RAISE_ERROR(OUT_OF_MEMORY_ATOM);
         } else {
-            term error_tuple = term_alloc_tuple(2, ctx);
+            term error_tuple = term_alloc_tuple(2, &ctx->heap);
             term_put_tuple_element(error_tuple, 0, ERROR_ATOM);
             term_put_tuple_element(error_tuple, 1, term_from_int(err));
             return error_tuple;
@@ -276,7 +279,7 @@ static term nif_tini(Context *ctx, int argc, term argv[])
         if (UNLIKELY(memory_ensure_free(ctx, 3) != MEMORY_GC_OK)) {
             RAISE_ERROR(OUT_OF_MEMORY_ATOM);
         } else {
-            term error_tuple = term_alloc_tuple(2, ctx);
+            term error_tuple = term_alloc_tuple(2, &ctx->heap);
             term_put_tuple_element(error_tuple, 0, ERROR_ATOM);
             term_put_tuple_element(error_tuple, 1, term_from_int(err));
             return error_tuple;
@@ -290,7 +293,7 @@ static term nif_tini(Context *ctx, int argc, term argv[])
         if (UNLIKELY(memory_ensure_free(ctx, 3) != MEMORY_GC_OK)) {
             RAISE_ERROR(OUT_OF_MEMORY_ATOM);
         } else {
-            term error_tuple = term_alloc_tuple(2, ctx);
+            term error_tuple = term_alloc_tuple(2, &ctx->heap);
             term_put_tuple_element(error_tuple, 0, ERROR_ATOM);
             term_put_tuple_element(error_tuple, 1, term_from_int(err));
             return error_tuple;
@@ -374,5 +377,5 @@ const struct Nif *atomvm_neopixel_get_nif(const char *nifname)
 
 #include <sdkconfig.h>
 #ifdef CONFIG_AVM_NEOPIXEL_ENABLE
-REGISTER_NIF_COLLECTION(atomvm_neopixel, atomvm_neopixel_init, atomvm_neopixel_get_nif)
+REGISTER_NIF_COLLECTION(atomvm_neopixel, atomvm_neopixel_init, NULL, atomvm_neopixel_get_nif)
 #endif
