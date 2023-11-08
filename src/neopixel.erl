@@ -165,7 +165,7 @@ handle_call(clear, _From, State) ->
 handle_call(refresh, _From, State) ->
     {reply, ?MODULE:nif_refresh(State#state.nif_handle, maps:get(timeout, State#state.options)), State};
 handle_call({set_pixel_rgb, I, R, G, B}, _From, State) ->
-    {reply, ?MODULE:nif_set_pixel_hsv(State#state.nif_handle, I, R, G, B), State};
+    {reply, ?MODULE:nif_set_pixel_rgb(State#state.nif_handle, I, R, G, B), State};
 handle_call({set_pixel_hsv, I, H, S, V}, _From, State) ->
     {reply, ?MODULE:nif_set_pixel_hsv(State#state.nif_handle, I, H, S, V), State};
 handle_call(Request, _From, State) ->
