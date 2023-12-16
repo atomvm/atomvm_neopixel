@@ -23,10 +23,19 @@ set(ATOMVM_NEOPIXEL_COMPONENT_SRCS
     "nifs/led_strip_rmt_ws2812.c"
 )
 
+# WHOLE_ARCHIVE option is supported only with esp-idf 5.x
+# A link option will be used with esp-idf 4.x
+if(IDF_VERSION_MAJOR EQUAL 5)
+    set(OPTIONAL_WHOLE_ARCHIVE WHOLE_ARCHIVE)
+else()
+    set(OPTIONAL_WHOLE_ARCHIVE "")
+endif()
+
 idf_component_register(
     SRCS ${ATOMVM_NEOPIXEL_COMPONENT_SRCS}
     INCLUDE_DIRS "nifs/include"
     PRIV_REQUIRES "libatomvm" "avm_sys" "driver"
+    ${OPTIONAL_WHOLE_ARCHIVE}
 )
 
 if (IDF_VERSION_MAJOR EQUAL 4)
