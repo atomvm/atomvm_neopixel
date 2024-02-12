@@ -2,11 +2,11 @@
 
 This AtomVM Erlang library and Nif can be used to control WS2812 LED strips using the ESP32 SoC for any Erlang/Elixir programs targeted for AtomVM on the ESP32 platform.
 
-The AtomVM ADC library is only supported on the ESP32 platform.
+The AtomVM NeoPixel library is only supported on the ESP32 platform.
 
 ## Build Instructions
 
-The AtomVM ADC library is implemented as an AtomVM component, which includes some native C code that must be linked into the ESP32 AtomVM image.  In order to build and deploy this client code, you must build an AtomVM binary image with this component compiled and linked into the image.
+The AtomVM NeoPixel library is implemented as an AtomVM component, which includes some native C code that must be linked into the ESP32 AtomVM image.  In order to build and deploy this client code, you must build an AtomVM binary image with this component compiled and linked into the image.
 
 For general instructions about how to build AtomVM and include third-party components into an AtomVM image, see the [AtomVM Build Instructions](https://doc.atomvm.net/build-instructions.html).
 
